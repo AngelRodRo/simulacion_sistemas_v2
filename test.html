@@ -1,0 +1,95 @@
+function cuadrados_medios(cantidad, semilla){
+   var D = semilla.length;
+   var X[0] = semilla;
+   if(D>3){
+      for(i=0;i<=cantidad;i++){
+		  Y[i]=Math.pow(X[i],2);
+		  R[i] = Y[i]/100;
+		  var l = Y[i].length;
+		  var r = l - D;
+		  if(r%2==0){
+			  var a = r/2;
+		  }
+		  else
+		  {		  		
+		  		Y[i] = "0"+Y[i];
+		  		var l = Y[i].length;
+		  		var r = l - D;
+		  		var a = r/2;
+	            X[i+1]=Y[i].substring(a,l-1+a);
+		  }		  	
+	  }
+
+	  return R;
+   }
+   else
+	   alert('Ingrese un numero con una cantidad de digitos mayor a 3');
+}
+
+function productos_medios(cantidad,semilla1,semilla2)
+{
+	var D1 = semilla1.length;
+	var D2 = semilla2.length;
+	if(D1>3){
+	  if(D2>3){
+		X[0]=semilla1;
+		X[1]=semilla2;
+		for(var i=0;i<=cantidad;i++){
+			Y[i]=X[i]*X[i+1];
+			R[i] = Y[i]/100;
+			var l = Y[i].length;
+			var r = l - cantidad;
+			var a = r/2;
+			X[i+2]=Y[i].substring(a,l-1+a);
+		}
+	  }else
+	       alert('Ingrese un numero mayor a 3 digitos');
+   	}
+   	else
+	   alert('Ingrese un numero con una cantidad de digitos mayor a 3');
+}
+
+function multiplicador_constante(semilla,constante){
+	var D1 = semilla.length;
+	var D2 = constante.length;
+
+	if(D1>3){
+		if(D2>3){
+			X[0] = semilla;
+			for (var i = 0; i <= cantidad; i++) {
+				Y[i] = constante*X[i];
+				R[i] = Y[i]/100;
+				var l = Y[i].length;
+				var r = l - cantidad;
+				var a = r/2;
+				X[i+1]=Y[i].substring(a,l-1+a);
+			}
+		}
+		else
+			alert('Ingrese una constante mayor a 3 digitos');
+	}else
+		alert('Ingrese una semilla mayor a 3 digitos');
+
+}
+
+function algoritmo_congruencial(semilla,a,c,m,cantidad){
+	X[0]=semilla;
+	for(var i=0;i<=cantidad;i++)
+	{
+		X[i+1]=(a*X[i])%m;
+		R[i+1]=X[i+1]/(m-1);
+	}
+}
+
+function algoritmo_branks(semilla,q,c,k){
+	X[0]=semilla;
+	var a = 1+4*k;
+	var m= Math.pow(2,q);
+	for(var i=0;i<=m;i++)
+	{
+		X[i+1]=(a*X[i])%m;
+		R[i+1]=X[i+1]/(m-1);
+	}
+}
+
+
