@@ -80,6 +80,23 @@ $(function(){
 		pruebas_corrida_arriba_abajo(R);
 	});
 
+	$("#pruebaArribaAbajoMedia").click(function(){
+		var R = $("#R").val().split("\n");
+		pruebas_corrida_arriba_abajo_media(R);
+	});
+
+	$("#pruebapoker").click(function(){
+		var R = $("#R").val().split("\n");
+		var D = $("#D").val();
+		prueba_poker(R,D);
+
+	});
+
+	$("#prueba_series").click(function(){
+		var R = $("#R").val().split("\n");
+		prueba_series(R);
+	})
+
 
 });
 
@@ -227,6 +244,15 @@ function pruebas_corrida_arriba_abajo(r){
 
 	media = (2*n-1)/3;
 	desviacion = (16*n-29)/90;
+	var z = Math.abs((c-media)/(Math.pow(desviacion,1/2)));
+
+	if(z<1.96){
+		alert('No se puede rechazar que los numeros del conjunto R son independientes');
+	}
+	else {
+		alert('Se rechaza que los numeros del conjunto R son independientes');
+	}
+
 
 }
 
@@ -235,62 +261,92 @@ function pruebas_corrida_arriba_abajo_media(r){
 	var n = r.length;
 	var c = 0;
 	var S = [];
+	var count_one=0;
+	var count_zero=0;
 
 	for (var i = 0; i < r.length; i++) {
 		if(i!=0){
-			if(0.5<=r[i]) S.push(1);
-			else 	S.push(0);
+			if(0.5<=r[i]){
+				S.push(1);
+				count_one++;
+			}
+			else{
+				S.push(0);
+				count_zero++;
+
+			}
 		}
 	}
 
-	var long_zero = [];
-	var long_one = []
-	var count = 0;
-
 	for (var i = 0; i < S.length; i++) {
 		if(i!=S.length-1){
-			count++;
 			if(S[i]!=S[i+1]){
-				if(S[i]==1)
-					long_zero.push(count);
-				else
-					long_one.push(count	);
-				count=0;
 				c++;
 			}
 		}
 	}
 
+	var Uco = (2*count_zero*count_one)/n + 1/2;
+	var des0 = (2*count_zero*count_one*(2*count_zero*count_one-n))/((Math.pow(n,2))*(n-1));
+
+	var z = (c - Uco)/Math.pow(des0,1/2);
+
+	if(-1.96<=z&&z<=1.96){
+		alert('No se puede rechazar que los numeros del conjunto R son independientes con un nivel de confianza del 95%');
+	}
+	else {
+		alert('Se puede rechazar que los numeros del conjunto R son independientes con un nivel de confianza del 95%')
+	}
+
+	// var long_zero = [];
+	// var long_one = []
+	// var count = 0;
+
+
+	// for (var i = 0; i < S.length; i++) {
+	// 	if(i!=S.length-1){
+	// 		count++;
+	// 		if(S[i]!=S[i+1]){
+	// 			if(S[i]==1)
+	// 				long_zero.push(count);
+	// 			else
+	// 				long_one.push(count);
+	// 			count=0;
+	// 			c++;
+	// 		}
+	// 	}
+	// }
+
 	media = (2*n-1)/3;
 	desviacion = (16*n-29)/90;
 }
 
-function prueba_poker(r){
-	if(r[0].length<=7){
-		for (var i = 0; i < r.length; i++) {
-			for (var i = 2; i < r[i].length; i++) {
+function prueba_poker(r,d){
 
-			}
-		}
-	}
-	else {
-		alert('Porfavor utilize numeros menores o iguales a 5 digitos');
+	for (var i = 0; i < r.length; i++) {
+		var a = round(r[i],d);
+
 	}
 }
 
+function round(value, decimals) {
+    return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+}
+
+
 function prueba_series(r){
 	var n = r.length;
-	var m = Math.pow(n,1/2);
+	var m = parseInt(Math.pow(n,1/2));
 
 	var pares_ordenados = [];
 
 	var distancias = [];
 
-	var c = [];
+	var c = 0;
 
 	var init = 0;
 
-	var val = 1/m;
+	var val = Number(1/m);
 
 	for (var i = 0; i < m; i++) {
 
@@ -313,7 +369,7 @@ function prueba_series(r){
 
 	for (var i = 0; i < n; i++) {
 		if(i!=n-1)
-			pares_ordenados({
+			pares_ordenados.push({
 				x:r[i],
 				y:r[i+1]
 			});
@@ -327,7 +383,7 @@ function prueba_series(r){
 	E = (n-1)/m;
 
 
-	for (var i = 0; i < m; i++) {
+	for (var i = 0; i < m*m; i++) {
 		cuadrante[i]=0;
 	}
 
