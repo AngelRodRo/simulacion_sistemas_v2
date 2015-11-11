@@ -87,8 +87,7 @@ $(function(){
 
 	$("#pruebapoker").click(function(){
 		var R = $("#R").val().split("\n");
-		var D = $("#D").val();
-		prueba_poker(R,D);
+		prueba_poker(R);
 
 	});
 
@@ -321,34 +320,184 @@ function pruebas_corrida_arriba_abajo_media(r){
 	desviacion = (16*n-29)/90;
 }
 
-function prueba_poker(r,d){
+function prueba_poker(r){
 
-	for (var i = 0; i < r.length; i++) {
-		var a = round(r[i],d);
+	var c=0;
 
+	var n = r.length;
+
+	var TD=0,_1P=0,_2P=0, TP=0,
+		Q=0,P=0,T=0;
+
+	var values = [];
+	var counts = [];
+
+	var D= r[0].length-2;
+
+	for (var k = 0; k < r.length; k++) {
+		for (var i = 2; i < r[k].length; i++) {
+			for (var j = 2; j < r[k].length; j++) {
+
+				if(j!=i){
+					if(jQuery.inArray(r[k][i],values)==-1){
+						if(r[k][i]==r[k][j]){
+							c++;
+						}
+					}
+				}
+
+			}
+
+			if(jQuery.inArray(r[k][i],values)==-1){
+				if(c!=0){
+					values.push(r[k][i]);
+					counts.push(c);
+				}
+			}
+
+			c = 0;
+		}
+
+		var flag=true;
+		var c2 = 0;
+
+		if(counts.length!=0){
+
+			for (var i = 0; i < values.length; i++) {
+
+				if(D==3){
+					if(counts[i]==1) _1P++;
+					if(counts[i]==2) T++;
+
+					break;
+				}
+
+
+				if(D==4){
+					if(counts[i]==1) {c2++;	flag = false;}
+
+					if(1<c2){
+						_2P++;
+						break
+					}
+
+					if(i==values.length-1&&c2==1){
+						_1P++;
+					}
+
+					if(flag)	{
+						if(counts[i]==2) T++;
+						if(counts[i]==3) P++;
+						break;
+					}
+				}
+
+				if(D==5){
+					if(counts[i]==1) {c2++;	flag = false;}
+
+					if(1<c2){
+						_2P++;
+						break
+					}
+
+					if(i==values.length-1&&c2==1){
+						_1P++;
+					}
+
+
+					if(flag)	{
+						if(counts[i]==2) {T++; flag = false;}
+						if(counts[i]==3) P++;
+						if(counts[i]==4) Q++;
+						break;
+					}
+				}
+
+
+
+			}
+		}else {
+			TD++;
+		}
+		counts = [];
 	}
+
+	var a;
+
+	if(D==3)	a = D;
+	if(D==4)	a = D+1;
+	if(D==5) a = D+3;
+
+	var s=0;
+
+	var PTD,P1P,P2P,PP,PT,PQ,PTD,X;
+
+	if(D==3){
+		PTD 	=  ((0.72*n)-TD)/(0.72*n);
+		P1P 	=  ((0.27*n)-_1P)/(0.27*n);
+		T 		=  ((0.01*n)-T)/(0.01*n);
+
+		X = PTD+P1P+T;
+	}
+
+	if(D==4){
+		PTD 	=  ((0.5040*n)-TD)/(0.5040*n);
+		P1P 	=  ((0.4320*n)-_1P)/(0.4320*n);
+		P2P 	=  ((0.0270*n)-_2P)/(0.0270*n);
+		PT 	=  ((0.0360*n)-T)/(0.0360*n);
+		PP 	=  ((0.001*n)-P)/(0.001*n);
+
+		X = PTD + P1P+P2P+PT+PP;
+	}
+
+	if(D==5){
+		PTD 	=  ((0.5040*n)-TD)/(0.5040*n);
+		P1D 	=  ((0.4320*n)-_1P)/(0.4320*n);
+		P2D 	=  ((0.0270*n)-_2P)/(0.0270*n);
+		PTP 	= 	((0.0270*n)-TP)/(0.0270*n);
+		PT 	=  ((0.0360*n)-T)/(0.0360*n);
+		PP 	=  ((0.001*n)-P)/(0.001*n);
+		PQ		=	((0.0270*n)-Q)/(0.0270*n);
+
+		X = PTD + P1D+P2D+PTP+PT+PP+PQ;
+	}
+
+	if(12.59<X)
+		alert('Se rechaza la independencia de los numeros del conjunto ri');
+	else {
+		alert('No se puede rechazar la independencia de los numeros del conjunto ri');
+	}
+
+
 }
 
 function round(value, decimals) {
-    return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+	return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
 }
 
 
 function prueba_series(r){
 	var n = r.length;
-	var m = parseInt(Math.pow(n,1/2));
+	var m = parseInt( Math.pow(n,1/2));
+
+
+	while (true) {
+		m++;
+		if(Math.pow(m,1/2) === parseInt(Math.pow(m,1/2), 10))	break;
+	}
+
 
 	var pares_ordenados = [];
 
 	var distancias = [];
 
-	var c = 0;
+	var c = 0	;
 
 	var init = 0;
 
-	var val = Number(1/m);
+	var val = Number(1/Math.pow(m,1/2));
 
-	for (var i = 0; i < m; i++) {
+	for (var i = 0; i < Math.pow(m,1/2)+1; i++) {
 
 		if(i==0){
 			distancias.push({
@@ -370,8 +519,8 @@ function prueba_series(r){
 	for (var i = 0; i < n; i++) {
 		if(i!=n-1)
 			pares_ordenados.push({
-				x:r[i],
-				y:r[i+1]
+				x:Number(r[i]),
+				y:Number(r[i+1])
 			});
 	}
 
@@ -383,20 +532,30 @@ function prueba_series(r){
 	E = (n-1)/m;
 
 
-	for (var i = 0; i < m*m; i++) {
+	for (var i = 0; i < m; i++) {
 		cuadrante[i]=0;
 	}
 
 	for (var i = 0; i < pares_ordenados.length; i++) {
 		for (var j = 0; j < distancias.length; j++) {
 			for (var k = 0; k < distancias.length; k++) {
-				if(distancias[j].y<pares_ordenados[i].y<distancias[j+1].y)
-					if(distancias[k].x<pares_ordenados[i].x<distancias[k+1].x)
-						cuadrante[c]++;
-				c++;
+				if(j!=distancias.length-1){
+					if(distancias[j].y<pares_ordenados[i].y &&pares_ordenados[i].y<distancias[j+1].y)
+						if(distancias[k].x<pares_ordenados[i].x&&pares_ordenados[i].x<distancias[k+1].x)
+							cuadrante[c]++;
+				}
+				var resta = distancias.length-1;
+
+				if(j!=0||j!=resta)
+					if()
+					c++;
+
+
+					&&k!=0||k!=resta)
 			}
 		}
-		c = 0;
+
+		c=0;
 	}
 
 	var s=0;
